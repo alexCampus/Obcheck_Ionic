@@ -1,0 +1,17 @@
+<ion-view view-title="Amis">
+  <ion-content>
+  <div id="map" data-tap-disabled="true"></div>
+    <ion-list>
+    
+      <ion-item class="item-remove-animate item-avatar item-icon-right"  ng-repeat="user in users" type="item-text-wrap" href="#/tab/users/{{user.idUser}}">
+        <img ng-src="{{user.avatar}}">
+        <h2>{{user.name}} {{user.lastname}}</h2>
+        <p> Se trouve a {{user.distance}} km</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+       
+      </ion-item>
+      
+    </ion-list>
+  </ion-content>
+</ion-view>
