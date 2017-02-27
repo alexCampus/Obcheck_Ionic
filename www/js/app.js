@@ -30,7 +30,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
 
 .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
-  $httpProvider.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
+  //$httpProvider.defaults.headers.get['Content-Type'] = 'application/json';
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 

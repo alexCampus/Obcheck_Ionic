@@ -7,13 +7,14 @@
     
     <ng-map center="{{maPosition}}" zoom="12">
       <marker position={{maPosition}}></marker>
-        <marker title='{{pos.title}}' ng-repeat="pos in positions" position="{{pos.lat}},{{pos.lng}}"></marker>
+        <marker title='{{pos.title}}' ng-repeat="pos in positions" position="{{pos.city}}"></marker>
 
     </ng-map>
 
-      <ion-item class="item-remove-animate item-avatar item-icon-right"  ng-repeat="user in users" type="item-text-wrap" href="#/tab/friends/{{user.idUser}}">
-        <img ng-src="{{user.avatar}}">
-        <h2>{{user.name}} {{user.lastname}}</h2>
+      <ion-item class="item-remove-animate item-avatar item-icon-right"  ng-repeat="user in users" type="item-text-wrap" href="#/tab/friends/{{user.id}}">
+        <img ng-src="{{user.photo}}">
+        <h2>{{user.firstname}} {{user.lastname}}</h2>
+        <h3>{{user.pseudo}}</h3>
         <p> Se trouve a {{pos.distance}} km</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 

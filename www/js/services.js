@@ -31,10 +31,10 @@ angular.module('starter.services', [])
       var user = {};
 
       var user = factory.getUsers().then(function(users){
-
-        angular.forEach(factory.users.users, function(value, key){
+         
+        angular.forEach(factory.users, function(value, key){
           
-          if (value.idUser == id) {
+          if (value.id == id) {
             user = value;
           }
         });
@@ -45,7 +45,7 @@ angular.module('starter.services', [])
       return deferred.promise;
     },
   }
-  
+ 
   return factory;
 })
 

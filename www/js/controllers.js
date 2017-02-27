@@ -1,5 +1,9 @@
 angular.module('starter.controllers', [])
 
+.controller('LoginCtrl', function(){
+  
+})
+
 .controller('FriendsCtrl', function($scope, $cordovaGeolocation, $cordovaVibration, NgMap, FriendsFactory, $interval) {
  
 
@@ -15,20 +19,22 @@ angular.module('starter.controllers', [])
       
         //var numMarkers = Math.floor(Math.random() * 4) + 4; //between 4 to 8 markers
         for (i = 0; i < users.length; i++) {
-           if (users[i].position != null) {
+           if (users[i].city != null) {
               var coordA = new google.maps.LatLng(users[i].position);
               var coordB = new google.maps.LatLng(maPosition[0], maPosition[1]);
               var distance = google.maps.geometry.spherical.computeDistanceBetween(coordA,coordB);
               var result = Math.round(distance/1000); 
-
-              var lat = users[i].position.lat;
-              var lng = users[i].position.lng;
-              var title = users[i].name;
-              var result = users[i].distance;
+             
+              var city = users[i].city;
+              
+              // var lat = users[i].position.lat;
+              // var lng = users[i].position.lng;
+              var title = users[i].pseudo;
+              // var result = users[i].distance;
                       
         }
-        vm.positions.push({lat:lat, lng:lng, title:title, distance:result});
-        // console.log("vm.positions", vm.positions);
+        vm.positions.push({city:city, title:title});
+         console.log("vm.positions", vm.positions);
         $scope.positions = vm.positions;
       }
     };
@@ -43,7 +49,7 @@ angular.module('starter.controllers', [])
   // });
   
   $scope.users = FriendsFactory.getUsers().then(function(users){
-   $scope.users = users.users;
+   $scope.users = users;
    
 
    var posOptions = {timeout: 10000, enableHighAccuracy: false};
@@ -55,7 +61,7 @@ angular.module('starter.controllers', [])
       var long = position.coords.longitude
       $scope.maPosition = [lat, long];      
       //console.log($scope.positions);
-      generateMarkers(users.users, $scope.maPosition);
+      generateMarkers(users, $scope.maPosition);
       
    }, function(err) {
       console.log(err)
@@ -92,8 +98,14 @@ angular.module('starter.controllers', [])
 
 .controller('OneUserCtrl', function($scope, FriendsFactory, $stateParams, $cordovaGeolocation){
   //Affichage user
+  
     var user = FriendsFactory.getUser($stateParams.id).then(function(user){
-      $scope.title = user.name + " " + user.lastname;
+      console.log(user);
+      if (user.firstname &&user.lastname) {
+        $scope.title = user.firstname + " " + user.lastname;        
+      }else {
+        $scope.title = user.pseudo;
+      }
       $scope.user = user;
 
       var posOptions = {timeout: 10000, enableHighAccuracy: false};
