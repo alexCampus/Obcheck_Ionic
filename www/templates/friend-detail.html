@@ -1,0 +1,33 @@
+<ion-view view-title="{{user.name}}">
+  <ion-content class="padding">
+  	<div class="row pull-right">
+    	<img ng-src="{{user.avatar}}"  style="width: 64px; height: 64px">
+    
+    	 <h1 class="col-offset-25">{{title}}</h1>
+	</div>
+     	<ng-map center="{{user.position}}" zoom="12"><marker position={{user.position}}></marker>
+			<directions
+          draggable="true"
+          panel="directions-panel"
+          travel-mode="DRIVING"
+          origin="{{maPosition}}"
+          destination="{{user.position}}">
+        </directions>
+     	</ng-map>
+     	<p><strong>Mon adresse est</strong> : <br>{{user.adress}} </p>
+     	<p><strong>Mon téléphone est</strong> : <br>{{user.phone}} </p>
+     	<p><strong>Mon age est</strong> : <br>{{user.age}} </p>
+     	<div ng-show="error.code" class="ng-hide">
+     		<p>Désolé mais {{user.name}} est trop loin pour faire un itinéraire</p>
+     	</div>
+     	<div ng-hide="error.code">
+     		<h3>Itinéraire</h3>
+			<div id="directions-panel" style="width: 100%; float:left; height: 100%; overflow: auto; padding: 0px 5px"></div>
+     		
+     	</div>
+    	
+     	
+   
+    
+  </ion-content>
+</ion-view>

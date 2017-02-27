@@ -12,7 +12,7 @@ angular.module('starter.services', [])
         deferred.resolve(factory.users);
       } 
       else {
-        $http.get('http://www.carbillet.net/api-digitalGrenoble/users/')
+        $http.get('http://localhost:8000/apiRest/users')
           .success(function(data, status){
 
             factory.users = data;

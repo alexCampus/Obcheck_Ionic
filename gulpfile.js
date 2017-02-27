@@ -26,6 +26,13 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+// task minify css
+gulp.task('minify-css', function () {
+    gulp.src('./www/css/style.css') // path to your file
+    .pipe(minifyCss())
+    .pipe(gulp.dest('./www/css/'));
+});
+
 gulp.task('watch', ['sass'], function() {
   gulp.watch(paths.sass, ['sass']);
 });

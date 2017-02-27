@@ -1,79 +1,143 @@
 angular.module('starter.controllers', [])
 
-.controller('FriendsCtrl', function($scope, FriendsFactory) {
+.controller('FriendsCtrl', function($scope, $cordovaGeolocation, $cordovaVibration, NgMap, FriendsFactory, $interval) {
+ 
+
+  $scope.vibrate = function(){
+    $cordovaVibration.vibrateWithPattern([0, 1000, 1000, 2000, 100, 4000, 100, 8000]);
+
+  }
+
+    var vm = this;
+    vm.positions = [];
+    var generateMarkers = function(users, maPosition) {
+      vm.positions = [];
+      
+        //var numMarkers = Math.floor(Math.random() * 4) + 4; //between 4 to 8 markers
+        for (i = 0; i < users.length; i++) {
+           if (users[i].position != null) {
+              var coordA = new google.maps.LatLng(users[i].position);
+              var coordB = new google.maps.LatLng(maPosition[0], maPosition[1]);
+              var distance = google.maps.geometry.spherical.computeDistanceBetween(coordA,coordB);
+              var result = Math.round(distance/1000); 
+
+              var lat = users[i].position.lat;
+              var lng = users[i].position.lng;
+              var title = users[i].name;
+              var result = users[i].distance;
+                      
+        }
+        vm.positions.push({lat:lat, lng:lng, title:title, distance:result});
+        // console.log("vm.positions", vm.positions);
+        $scope.positions = vm.positions;
+      }
+    };
+
+    
   
+
+  // NgMap.getMap().then(function(map) {
+  //   console.log(map.getCenter());
+  //   console.log('markers', map.markers);
+  //   console.log('shapes', map.shapes);
+  // });
   
   $scope.users = FriendsFactory.getUsers().then(function(users){
+   $scope.users = users.users;
    
-    google.maps.event.addDomListener(document.getElementById("map"), 'load', $scope.initialise(0, 0, users.users));
+
+   var posOptions = {timeout: 10000, enableHighAccuracy: false};
+   $cordovaGeolocation
+   .getCurrentPosition(posOptions)
+  
+   .then(function (position) {
+      var lat  = position.coords.latitude
+      var long = position.coords.longitude
+      $scope.maPosition = [lat, long];      
+      //console.log($scope.positions);
+      generateMarkers(users.users, $scope.maPosition);
+      
+   }, function(err) {
+      console.log(err)
+   });
+
+    var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+    var watch = $cordovaGeolocation.watchPosition(watchOptions);
+  
+   watch.then(
+      null,
+    
+      function(err) {
+         console.log(err)
+      },
+    
+      function(position) {
+         var lat  = position.coords.latitude
+         var long = position.coords.longitude
+         console.log(lat + '' + long)
+      }
+   );
+
+   watch.clearWatch();
+
+    
   
   }, function(msg){
         alert(msg);
     })
 
 
-  //Maps google    
-    $scope.initialise = function(a,b ,users) {
+  
+})
+
+.controller('OneUserCtrl', function($scope, FriendsFactory, $stateParams, $cordovaGeolocation){
+  //Affichage user
+    var user = FriendsFactory.getUser($stateParams.id).then(function(user){
+      $scope.title = user.name + " " + user.lastname;
+      $scope.user = user;
+
+      var posOptions = {timeout: 10000, enableHighAccuracy: false};
+   $cordovaGeolocation
+   .getCurrentPosition(posOptions)
+  
+   .then(function (position) {
+      var lat  = position.coords.latitude
+      var long = position.coords.longitude
+      $scope.maPosition = [lat, long];      
+      //console.log(lat + '   ' + long)
+
+   }, function(err) {
+      console.log(err)
+   });
+
+    var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+    var watch = $cordovaGeolocation.watchPosition(watchOptions);
+  
+   watch.then(
+      null,
     
-    var myLatlng = new google.maps.LatLng(a, b);
-    var mapOptions = {
-      center: myLatlng,
-      zoom: 16,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
+      function(err) {
+         console.log(err)
+         $scope.error = err;
+      },
     
-
-    var markers = [];
-    var myPosition = [];
-
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].position != null) {
-        
-        var marker = new google.maps.Marker({
-          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-          position: {lat: users[i].position.lat, lng: users[i].position.lng},
-          map: map,
-          title: users[i].name + " " + users[i].lastname + " Position"
-        });
-        
-        markers.push(marker);
-
+      function(position) {
+         var lat  = position.coords.latitude
+         var long = position.coords.longitude
+         console.log(lat + '' + long)
       }
-    
-    }
-    
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-     for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map); 
+   );
 
-     }
+   watch.clearWatch();
+      
+      
+     
+    }, function(msg){
+        alert(msg);
+    })
 
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      myPosition.push({lat:pos.coords.latitude, lng:pos.coords.longitude});
-      
-      map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-        var myLocation = new google.maps.Marker({
-            position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-            map: map,
-            title: "My Location"
-        });
-   
+    //affichage user
   
-    var coordB = new google.maps.LatLng(myPosition[0].lat, myPosition[0].lng);
-   for (var i = 0; i < users.length; i++) {
-   
-    var coordA = new google.maps.LatLng(users[i].position);
-    var distance = google.maps.geometry.spherical.computeDistanceBetween(coordA,coordB);
-    var result = Math.round(distance/1000); 
-    users[i].distance = result;
-    
-      
-   }
-      
-    });
-    $scope.users = users;
-  
-  };  
 })
 
 .controller('ChatsCtrl', function($scope, Chats) {
